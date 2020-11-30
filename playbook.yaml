@@ -1,0 +1,56 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Create xiaohei user
+        user:
+          name: xiaohei
+            
+    - name: Update all pkgs to latest
+      apt:
+        name: "*"
+        state: latest
+
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      apt:
+        upgrade: dist
+
+    - name: Install some packages to their latest version
+      apt:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - emacs
+        - zsh
+        - python
+        - python3-pip
+        - guake
+        - snap
+        - virtualenv
+        - docker.io
+        - brave
+
+    - name: Install slack
+      snap:
+        name: "{{ item }}"
+        classic: yes
+      loop:
+        - slack
+        - postman
+
+    - name: Add docker Group
+      group:
+        name: docker
+        state: present
+
+    - name: Add vagrant user to docker group
+      user:
+        name: xiaohei
+        groups: docker
+        append: yes
+
+    # - name: "fetch my dotfiles"
+    #   git:
+    #     repo: git@github.com:marsoder/dotfiles.git
+    #     dest: "/home/vagrant/dotfiles"
